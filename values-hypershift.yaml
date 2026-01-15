@@ -4,8 +4,8 @@ global:
   hypershift:
     oidc:
 # OIDC bucket information: provide regoin and bucketName
-      region: ''
-      bucketName: ''
+      region: us-west-1
+      bucketName: jrickard-hcpdemo
       
 # AWS S3 Controller for Kubernetes configuration 
 # Only modify this when creating a new s3 bucket for your deployment
