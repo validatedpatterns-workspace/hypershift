@@ -3,20 +3,10 @@
 global:
   hypershift:
     oidc:
-# OIDC bucket information: provide regoin and bucketName
-      region: us-west-1
-      bucketName: jrickard-hcpdemo
+# OIDC bucket information: provide region and bucketName
+      region: ''
+      bucketName: ''
       
-# AWS S3 Controller for Kubernetes configuration 
-# Only modify this when creating a new s3 bucket for your deployment
-  s3:
-    # Should the pattern create the s3 bucket(true), or bring your own (false). 
-    createBucket: false
-
-    # Any additional tags to add to a bucket created by the pattern
-    additionalTags: 
-      lifecycle: keep
-
 # register a GitHub oAuth application: https://github.com/settings/applications/new
 # configure oauth provider: https://docs.openshift.com/container-platform/4.15/authentication/understanding-identity-provider.html
 #
