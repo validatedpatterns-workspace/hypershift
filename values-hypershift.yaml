@@ -2,10 +2,12 @@
 # Define the s3 bucket information  
 global:
   hypershift:
+    createBucket: true
     oidc:
 # OIDC bucket information: provide region and bucketName
       region: ''
       bucketName: ''
+
       
 # register a GitHub oAuth application: https://github.com/settings/applications/new
 # configure oauth provider: https://docs.openshift.com/container-platform/4.15/authentication/understanding-identity-provider.html
