@@ -2,4 +2,16 @@
 # This Makefile includes the common pattern targets from Makefile-common
 # You can add custom targets above or below the include line
 
+##@ S3 tasks
+
+.PHONY: create-s3-bucket
+create-s3-bucket: ## Create a public S3 bucket (BUCKET_NAME=name REGION=region)
+ifndef BUCKET_NAME
+	$(error BUCKET_NAME is required)
+endif
+ifndef REGION
+	$(error REGION is required)
+endif
+	@./scripts/create-public-s3-bucket.sh "$(BUCKET_NAME)" "$(REGION)"
+
 include Makefile-common
