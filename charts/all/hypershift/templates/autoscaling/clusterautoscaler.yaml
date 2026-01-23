@@ -1,0 +1,42 @@
+{{- if .Values.autoscaling.clusterAutoscaler.enabled }}
+apiVersion: autoscaling.openshift.io/v1
+kind: ClusterAutoscaler
+metadata:
+  name: default
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+spec:
+  balanceSimilarNodeGroups: {{ .Values.autoscaling.clusterAutoscaler.balanceSimilarNodeGroups | default true }}
+  balancingIgnoredLabels:
+    - topology.kubernetes.io/zone
+    - topology.ebs.csi.aws.com/zone
+  skipNodesWithLocalStorage: {{ .Values.autoscaling.clusterAutoscaler.skipNodesWithLocalStorage | default false }}
+  podPriorityThreshold: {{ .Values.autoscaling.clusterAutoscaler.podPriorityThreshold | default -10 }}
+  resourceLimits:
+    maxNodesTotal: {{ .Values.autoscaling.clusterAutoscaler.resourceLimits.maxNodesTotal }}
+    {{- if .Values.autoscaling.clusterAutoscaler.resourceLimits.cores }}
+    cores:
+      min: {{ .Values.autoscaling.clusterAutoscaler.resourceLimits.cores.min }}
+      max: {{ .Values.autoscaling.clusterAutoscaler.resourceLimits.cores.max }}
+    {{- end }}
+    {{- if .Values.autoscaling.clusterAutoscaler.resourceLimits.memory }}
+    memory:
+      min: {{ .Values.autoscaling.clusterAutoscaler.resourceLimits.memory.min }}
+      max: {{ .Values.autoscaling.clusterAutoscaler.resourceLimits.memory.max }}
+    {{- end }}
+    {{- if .Values.autoscaling.clusterAutoscaler.resourceLimits.gpus }}
+    gpus:
+    {{- range .Values.autoscaling.clusterAutoscaler.resourceLimits.gpus }}
+      - type: {{ .type }}
+        min: {{ .min }}
+        max: {{ .max }}
+    {{- end }}
+    {{- end }}
+  scaleDown:
+    enabled: {{ .Values.autoscaling.clusterAutoscaler.scaleDown.enabled }}
+    delayAfterAdd: {{ .Values.autoscaling.clusterAutoscaler.scaleDown.delayAfterAdd | default "10m" }}
+    delayAfterDelete: {{ .Values.autoscaling.clusterAutoscaler.scaleDown.delayAfterDelete | default "5m" }}
+    delayAfterFailure: {{ .Values.autoscaling.clusterAutoscaler.scaleDown.delayAfterFailure | default "30s" }}
+    unneededTime: {{ .Values.autoscaling.clusterAutoscaler.scaleDown.unneededTime | default "5m" }}
+    utilizationThreshold: {{ .Values.autoscaling.clusterAutoscaler.scaleDown.utilizationThreshold | default "0.4" | quote }}
+{{- end }}

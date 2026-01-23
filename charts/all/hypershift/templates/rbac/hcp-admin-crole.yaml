@@ -106,4 +106,29 @@ rules:
   - get
   - list
   - watch
+# Autoscaling resources - manage cluster and machine autoscalers
+- apiGroups:
+  - autoscaling.openshift.io
+  resources:
+  - clusterautoscalers
+  - machineautoscalers
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+# Machine API resources - for autoscaling integration
+- apiGroups:
+  - machine.openshift.io
+  resources:
+  - machinesets
+  - machinesets/scale
+  - machines
+  verbs:
+  - get
+  - list
+  - watch
 {{- end }}

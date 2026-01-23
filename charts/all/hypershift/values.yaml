@@ -2,6 +2,59 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+# Cluster Autoscaling Configuration
+#
+# Enable and configure cluster autoscaling for dynamic node management
+autoscaling:
+  # ClusterAutoscaler - cluster-wide autoscaler settings
+  clusterAutoscaler:
+    enabled: false
+    # Balance similar node groups (e.g., MachineSets across AZs) to spread nodes evenly
+    balanceSimilarNodeGroups: true
+    # Allow scale-down of nodes with pods using local storage (emptyDir)
+    # Set to true to prevent scaling down nodes with local storage pods
+    skipNodesWithLocalStorage: false
+    # Pods with priority lower than this will not prevent node scale down
+    podPriorityThreshold: -10
+    resourceLimits:
+      # Maximum number of nodes in the cluster (including control plane)
+      maxNodesTotal: 24
+      # Optional: CPU cores limits across all nodes
+      cores:
+        min: 8
+        max: 128
+      # Optional: Memory limits across all nodes (in GB)
+      memory:
+        min: 32
+        max: 512
+    scaleDown:
+      enabled: true
+      # How long after scale up before scale down evaluation
+      delayAfterAdd: "10m"
+      # How long after node deletion before another deletion
+      delayAfterDelete: "5m"
+      # How long after scale down failure before retry
+      delayAfterFailure: "30s"
+      # How long a node should be unneeded before scale down
+      unneededTime: "5m"
+      # Node utilization threshold below which scale down is considered
+      utilizationThreshold: "0.4"
+
+  # MachineAutoscalers - per-MachineSet autoscaling configuration
+  # Define one entry per MachineSet you want to autoscale
+  machineAutoscalers: []
+  # Example configuration:
+  # - name: worker-us-east-1a
+  #   enabled: true
+  #   machineSetName: cluster-name-worker-us-east-1a
+  #   minReplicas: 1
+  #   maxReplicas: 6
+  # - name: worker-us-east-1b
+  #   enabled: true
+  #   machineSetName: cluster-name-worker-us-east-1b
+  #   minReplicas: 1
+  #   maxReplicas: 6
+
 # Role Based Access Controls
 #
 # Provide a list of users to add to the clusterrolebinding

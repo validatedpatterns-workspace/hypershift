@@ -10,9 +10,10 @@ This pattern deploys and configures the multicluster-engine operator with the hy
 
 Within the pattern are some optional deployment configurations that can assist with your HyperShift deployment as well as some Day2 configurations.
 
-- AWS S3 Controller for Kubernetes (ack-s3)
+- S3 Bucket with a public policy applied
 
-  - Configuring this will create a bucket, a public bucket policy and associate the two resources together.
+  - Your account will need to have ability to create an s3 bucket and apply a policy to it.
+  - Define the bucket in `values-hypershift.yaml`
 
 - oAuth Provider
 
@@ -21,6 +22,10 @@ Within the pattern are some optional deployment configurations that can assist w
 - RBAC
 
   - A cluster role and cluster role binding are created for a provided list of users. This role will grant the user the ability to create/destroy/view the resources required for creating hostedclusters on HyperShift.
+
+- Cluster Autoscaling
+
+  - Configure ClusterAutoscaler and MachineAutoscaler resources to automatically scale your cluster nodes based on workload demand.
 
 ## PreRequisites
 
@@ -48,23 +53,24 @@ Within the pattern are some optional deployment configurations that can assist w
 > If you use the ack-s3 controller option to deploy your bucket, set `createBucket` to `true` in `values-hypershift.yaml`
 >
 
-### ACK S3 Controller
+### Cluster Autoscaling
 
 - Enable this feature:
 
-  - Edit `values-global.yaml`
-
-    - Set `.main.clusterGroupName` to `prod`
-
   - Edit `values-hypershift.yaml`
 
-    - Provide the region to create the bucket in
+    - Set `.autoscaling.clusterAutoscaler.enabled` to `true`
 
-    - Provide the bucket name
+    - Configure resource limits (maxNodesTotal, cores, memory)
 
-    - set `.global.s3.createBucket` to `true`
+    - Configure scale down behavior
 
-- For both hypershift and aws s3 controller we need to configure secrets that use your aws credentials. The default uses `~/.aws/credentials` for parsing the credential.
+    - Define MachineAutoscalers for each MachineSet you want to autoscale
+
+**[NOTE]**
+>
+> To find your MachineSet names, run: `oc get machinesets -n openshift-machine-api`
+>
 
 ### oAuth Provider
 
@@ -143,6 +149,33 @@ rbac:
     - user1
     - user2
     - user3
+
+autoscaling:
+  clusterAutoscaler:
+    enabled: true
+    resourceLimits:
+      maxNodesTotal: 24
+      cores:
+        min: 8
+        max: 128
+      memory:
+        min: 32
+        max: 512
+    scaleDown:
+      enabled: true
+      delayAfterAdd: "10m"
+      utilizationThreshold: "0.4"
+  machineAutoscalers:
+    - name: worker-autoscaler-1a
+      enabled: true
+      machineSetName: mycluster-worker-us-east-1a
+      minReplicas: 1
+      maxReplicas: 6
+    - name: worker-autoscaler-1b
+      enabled: true
+      machineSetName: mycluster-worker-us-east-1b
+      minReplicas: 1
+      maxReplicas: 6
 
   ```
 

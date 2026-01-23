@@ -5,10 +5,9 @@ global:
     createBucket: true
     oidc:
 # OIDC bucket information: provide region and bucketName
-      region: ''
-      bucketName: ''
+      region: ""
+      bucketName: ""
 
-      
 # register a GitHub oAuth application: https://github.com/settings/applications/new
 # configure oauth provider: https://docs.openshift.com/container-platform/4.15/authentication/understanding-identity-provider.html
 #
@@ -20,6 +19,42 @@ global:
       clientID: #clientID of the registered GitHub oAuth Application
       orgs:
       - name: #list of github authorized organizations
+
+# Cluster Autoscaling Configuration
+# Enable autoscaling to automatically adjust cluster size based on workload demands
+autoscaling:
+  clusterAutoscaler:
+    # Set to true to enable cluster autoscaling
+    enabled: false
+    # Balance nodes across similar MachineSets (e.g., across availability zones)
+    balanceSimilarNodeGroups: true
+    # Allow scale-down of nodes running pods with emptyDir volumes
+    skipNodesWithLocalStorage: false
+    resourceLimits:
+      # Maximum total nodes allowed in the cluster
+      maxNodesTotal: 24
+      cores:
+        min: 8
+        max: 128
+      memory:
+        min: 32
+        max: 512
+    scaleDown:
+      enabled: true
+      # Time to wait after scale up before considering scale down
+      delayAfterAdd: "10m"
+      # Node utilization threshold (0.0-1.0) below which nodes are candidates for removal
+      utilizationThreshold: "0.6"
+
+  # Define MachineAutoscalers for each MachineSet to autoscale
+  # Uncomment and configure based on your cluster's MachineSets
+  machineAutoscalers: []
+  # Example:
+  # - name: worker-autoscaler-1a
+  #   enabled: true
+  #   machineSetName: <cluster-name>-worker-<zone>
+  #   minReplicas: 1
+  #   maxReplicas: 6
 
 # Set rbac.create to false if you want to skip creation of role/rolebinding.
 rbac:

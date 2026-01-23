@@ -1,0 +1,21 @@
+{{- if .Values.autoscaling.machineAutoscalers }}
+{{- range .Values.autoscaling.machineAutoscalers }}
+{{- if .enabled }}
+---
+apiVersion: autoscaling.openshift.io/v1beta1
+kind: MachineAutoscaler
+metadata:
+  name: {{ .name }}
+  namespace: openshift-machine-api
+  annotations:
+    argocd.argoproj.io/sync-wave: "11"
+spec:
+  minReplicas: {{ .minReplicas }}
+  maxReplicas: {{ .maxReplicas }}
+  scaleTargetRef:
+    apiVersion: machine.openshift.io/v1beta1
+    kind: MachineSet
+    name: {{ .machineSetName }}
+{{- end }}
+{{- end }}
+{{- end }}
