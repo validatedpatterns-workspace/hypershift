@@ -53,7 +53,7 @@ autoscaling:
   # - name: worker-autoscaler-1a
   #   enabled: true
   #   machineSetName: <cluster-name>-worker-<zone>
-  #   minReplicas: 1
+  #   minReplicas: 0
   #   maxReplicas: 6
 
 # Set rbac.create to false if you want to skip creation of role/rolebinding.
