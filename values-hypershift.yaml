@@ -2,11 +2,20 @@
 # Define the s3 bucket information  
 global:
   hypershift:
-    createBucket: true
     oidc:
-# OIDC bucket information: provide region and bucketName
-      region: ""
-      bucketName: ""
+# OIDC bucket information: provide regoin and bucketName
+      region: us-east-2
+      bucketName: vp-hypershift-state
+
+# AWS S3 Controller for Kubernetes configuration
+# Only modify this when creating a new s3 bucket for your deployment
+  s3:
+    # Should the pattern create the s3 bucket(true), or bring your own (false). 
+    createBucket: false
+
+    # Any additional tags to add to a bucket created by the pattern
+    additionalTags:
+      lifecycle: keep
 
 # register a GitHub oAuth application: https://github.com/settings/applications/new
 # configure oauth provider: https://docs.openshift.com/container-platform/4.15/authentication/understanding-identity-provider.html
@@ -20,44 +29,17 @@ global:
       orgs:
       - name: #list of github authorized organizations
 
-# Cluster Autoscaling Configuration
-# Enable autoscaling to automatically adjust cluster size based on workload demands
-autoscaling:
-  clusterAutoscaler:
-    # Set to true to enable cluster autoscaling
-    enabled: false
-    # Balance nodes across similar MachineSets (e.g., across availability zones)
-    balanceSimilarNodeGroups: true
-    # Allow scale-down of nodes running pods with emptyDir volumes
-    skipNodesWithLocalStorage: false
-    resourceLimits:
-      # Maximum total nodes allowed in the cluster
-      maxNodesTotal: 24
-      cores:
-        min: 8
-        max: 128
-      memory:
-        min: 32
-        max: 512
-    scaleDown:
-      enabled: true
-      # Time to wait after scale up before considering scale down
-      delayAfterAdd: "10m"
-      # Node utilization threshold (0.0-1.0) below which nodes are candidates for removal
-      utilizationThreshold: "0.6"
-
-  # Define MachineAutoscalers for each MachineSet to autoscale
-  # Uncomment and configure based on your cluster's MachineSets
-  machineAutoscalers: []
-  # Example:
-  # - name: worker-autoscaler-1a
-  #   enabled: true
-  #   machineSetName: <cluster-name>-worker-<zone>
-  #   minReplicas: 0
-  #   maxReplicas: 6
-
 # Set rbac.create to false if you want to skip creation of role/rolebinding.
 rbac:
   create: false
 # Provide a list of users to add to the clusterrolebinding
-  users: []
+  users:
+  - day0hero
+  - mbaldessari
+  - beekhof
+  - darkdoc
+  - claudiol
+  - mhjacks
+  - mlabonte-rh
+  - yukinchan
+  - dminnear-rh
