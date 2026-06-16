@@ -13,6 +13,7 @@ clusterGroup:
       targetNamespaces: []
     external-secrets:
     multicluster-engine:
+    cluster-provisioning:
 
   subscriptions:
     eso:
